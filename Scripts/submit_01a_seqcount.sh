@@ -4,10 +4,12 @@
 #SBATCH --mail-type end
 #SBATCH --mail-user=rc836@mit.edu
 
+## Input files:
 echo "count all reads; nodes: 1; mem: 10G"
 echo "Start - `date`"
 echo "----"
-for f in `ls fastq/*/*_[12]_sequence.fastq` #f=fastq/*/201215Ded_D20-6998_1_sequence.fastq
+for f in `ls fastq/*/*_[12]_sequence.fastq`
+# Example f (input file): fastq/221222Ded_D22-12879/221222Ded_D22-12879_1_sequence.fastq
 do
 	start="`date +%s`"
 	l=`wc -l $f|cut -f1 -d " "`
@@ -17,9 +19,11 @@ do
 	end="`date +%s`"
 	echo "$((($end-$start)/60)) minutes and $((($end-$start)%60)) seconds elapsed."	
 done
+# Create output file: _1_seqcount
 head fastq/*/*fastq_readcount >_1_seqcount
 echo "seqcount written"
 module load python3/3.6.4
+# Reorganize _1_seqcount into tabulate format
 python submit_01b_format.py _1_seqcount
 echo "----"
 echo "Finish - `date`"
