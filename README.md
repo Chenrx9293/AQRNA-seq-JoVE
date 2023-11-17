@@ -51,9 +51,11 @@ Sequence reads after adaptor trimming in FASTQ format.
 - fastq/GroupID_SampleID/GroupID_SampleID_2_sequence.3clipped.fq 
 ### Command: 
 Trim the 3' adaptor sequences from forward reads 
-- sbatch submit_03_3clip.sh 
+- sbatch submit_03_3clip.sh
+
 Trim the 3' adaptor sequences from reverse reads 
 - sbatch submit_03_3clip_read2.sh
+
 ## Step 4: Enumerate sequence reads after trimming 3' adaptors
 ### Description:
 This step involves enumerating the sequence reads after trimming 3' adaptors. The counts for forward and reverse reads may not be identical at this point. 
@@ -104,8 +106,10 @@ Forward and RC reverse reads after length filtering in FASTA format.
 ### Command:
 Filter by length for forward reads.
 - sbatch submit_07a_len10_read1.sh
+
 Filter by length for RC reverse reads.
 sbatch submit_07a_len10_read2.sh
+
 ## Step 8: BLAST analysis
 ### Description:
 This step aligns the sequence reads after length filtering to the reference sequence library using blastn. The word size is set to 9 to bolster sensitivity. Output is generated in tabulate format to facilitate downstream analyses.
@@ -168,15 +172,20 @@ Forward and RC reverse read pairs with a consensus alignment.
 ### Output files: 
 The optimal BLAST alignment for all sequence reads. 
 - tRNA_11_culledfileout/SampleID_culled.txt
+
 The optimal BLAST alignments for sequence reads that could not be aligned to unique reference sequences. 
 - tRNA_11_culledfileout/SampleID_culled_disc.txt 
+
 The optimal BLAST alignment for sequence reads with unique alignment to the reference sequence. library.
 - tRNA_11_culledfileout/SampleID_culled_nodupe.txt 
+
 ### Commands: 
 Create a directory for storing the optimal BLAST alignment files. 
 - mkdir tRNA_11_culledfileout 
+
 Identify the optimal BLAST alignments for sequence reads. 
 - sbatch submit_11a_tRNAcull.sh 
+
 ## Step 12: Extract BLAST alignment results for each reference sequence. 
 ### Description:
 This step partitions the BLAST alignment results with respect to individual reference sequences. 
@@ -189,10 +198,13 @@ The BLAST alignment results that belong to each reference sequence (e.g., specif
 ### Commands: 
 Create a directory for storing output files. 
 - mkdir tRNA_12_grepped 
+
 Extract BLAST alignment results that belong to each reference sequence. 
 - sbatch submit_12a_nodupe_tRNA.sh 
+
 Remove BLAST alignments with eVal > 0.001. 
 - sbatch submit_13a_recull_eVal_tRNA.sh 
+
 ## Step 13: Generate the abundance matrix. 
 ### Description:
 This steps generates an abundance matrix, with members of the small RNA species of interest as rows and samples as columns, which can be used for downstream analyses. 
@@ -205,10 +217,13 @@ The BLAST alignment results that belong to each reference sequence (e.g., specif
 ### Commands: 
 Create a directory for storing intermediate output files. 
 - mkdir tRNA_13_tempcounts 
+
 Enumerate full-length and partial alignments for each reference sequence. 
-- sbatch submit_13b_count_tRNAalignments.sh 
+- sbatch submit_13b_count_tRNAalignments.sh
+
 Create a directory for storing abundance matrices. 
 - mkdir tRNA_counts 
+
 Reorganize intermediate results into abundance matrices to facilitate downstream analyses. 
 - sbatch submit_13e_formatCounts_tRNA.sh 
 
