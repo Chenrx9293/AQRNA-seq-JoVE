@@ -66,7 +66,7 @@ A tabulate summary of the sequence read counts after trimming 3' adaptors.
 - _3_3clippedcount_formatted.txt 
 ### Command: 
 sbatch submit_04a_3clipcount.sh 
-## Generate the reverse complement (RC) of the reverse reads
+## Step 5: Generate the reverse complement (RC) of the reverse reads
 ### Description:
 This step involves converting reverse reads to their reverse complement, which facilitates the downstream processing. 
 ### Input files:
@@ -119,13 +119,13 @@ Raw BLAST alignment results for forward and RC reverse reads in tabulate format
 - tRNA_08-10_blast/GroupID_SampleID_2.tRNAblast
 ### Commands: 
 Load the BLAST program. 
-- module load blast/2.6.0 
+- module load blast/2.6.0
 Create the BLAST database from the reference sequence library in FASTA format. 
-- makeblastdb -in StdOlg_Sequence.fasta -parse_seqids -dbtype nucl 
+- makeblastdb -in StdOlg_Sequence.fasta -parse_seqids -dbtype nucl
 Create a directory for storing BLAST alignment results. 
-- mkdir tRNA_08-10_blast 
+- mkdir tRNA_08-10_blast
 Align forward reads to the reference sequence library. 
-- sbatch submit_08_tRNAblast_read1.sh 
+- sbatch submit_08_tRNAblast_read1.sh
 Align RC reverse reads to the reference sequence library. 
 - sbatch submit_08_tRNAblast_read2.sh
 ## Step 9: Pair the forward and RC reverse reads that are successfully aligned to the reference sequence library
