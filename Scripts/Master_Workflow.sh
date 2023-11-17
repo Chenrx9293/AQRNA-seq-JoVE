@@ -9,19 +9,18 @@
 ##---------------------------------------------------------------------------------------------
 ## Step 1: count the number of raw sequence reads
 sbatch submit_01a_seqcount.sh
-# Refers to submit_01b_format.py
-# Input: 180719Ded_D18-6934_1_sequence.fastq; 180719Ded_D18-6934_2_sequence.fastq
-# Output: _1_seqcount
-# For the formatting step, changes were made for the script to run through
+# Input files: quality-filtered raw sequence reads in FASTQ format (details on how to prepare the input files can be found in the section "set up directories and prepare files")
+# Output files
+# - _1_seqcount: the number of quality-filtered raw sequence reads in each FASTQ file.
+# - _1_seqcount_formatted.txt: _1_seqcount reorganized into tabulate format.
 ##---------------------------------------------------------------------------------------------
 ## Step 2: count the number of 5' and 3' adapters and their reverse complements
 sbatch submit_02a_grep_FAST.sh
-# Input: 180719Ded_D18-6947_1_sequence.fastq; 180719Ded_D18-6947_2_sequence.fastq
-# Output: _2_linkercount_linecheck, _2_linkercount, _2_linkercount_formatted.txt
-# The forward reads contained a large number of Linker1 reverse complements
-# The reverse reads contained a large number of Linker2 reverse complements
-# This was cross-verified by the linker clipping step
-# For the formatting step, changes were made for the script to run through
+# Description: this step verified the sequencing process by enumerating the occurrence of linker sequences and their reverse complements in the sequencing reads.
+# For paired-end sequence reads, expect a high count of Linker 1 sequence in the forward reads and a high count of Linker 2 sequence in the reverse reads.
+# For single-end sequence reads, expect a high count of Linker 1 sequence in the reads.
+# Input: fastq/221222Ded_D22-12879/221222Ded_D22-12879_1_sequence.fastq; fastq/221222Ded_D22-12879/221222Ded_D22-12879_2_sequence.fastq
+# Output: _2_linkercount_linecheck; _2_linkercount; _2_linkercount_formatted.txt
 ##---------------------------------------------------------------------------------------------
 ## Step 3: strip 3' adapter from reads 1 and 2
 # better clipping by Jennifer Hu:

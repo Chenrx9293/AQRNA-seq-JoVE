@@ -20,7 +20,7 @@ do
 		echo "Old ${newpath}/${tRNA}_FL.txt was removed"
 	fi
 
-	maxlength=$(python submit_13d_maxlength.py $tRNA StdOlg_Sequence.fasta)
+	maxlength=$(python submit_13d_maxlength.py $tRNA E_coli_BW25113_tRNA_RefSeqLib_RC_2023_10_17.fasta)
 	## make sure fasta file matches target ^^^^^
 	l=$((maxlength-5))
 
