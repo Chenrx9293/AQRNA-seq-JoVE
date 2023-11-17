@@ -120,14 +120,19 @@ Raw BLAST alignment results for forward and RC reverse reads in tabulate format
 ### Commands: 
 Load the BLAST program. 
 - module load blast/2.6.0
+
 Create the BLAST database from the reference sequence library in FASTA format. 
 - makeblastdb -in StdOlg_Sequence.fasta -parse_seqids -dbtype nucl
+
 Create a directory for storing BLAST alignment results. 
 - mkdir tRNA_08-10_blast
+
 Align forward reads to the reference sequence library. 
 - sbatch submit_08_tRNAblast_read1.sh
+
 Align RC reverse reads to the reference sequence library. 
 - sbatch submit_08_tRNAblast_read2.sh
+
 ## Step 9: Pair the forward and RC reverse reads that are successfully aligned to the reference sequence library
 ### Description:
 This step cross-validates the BLAST alignment results by identifying pairs of forward and RC reverse reads that are aligned to the same reference sequence with an overlap between the aligned regions. 
