@@ -218,7 +218,8 @@ This steps generates an abundance matrix, with members of the small RNA species 
 ### Input files:
 The blastn alignment results that belong to each reference sequence (e.g., specific tRNAs). 
 - tRNA_12_grepped/SampleID_Small-RNA-ID_maxeVal 
-### Output files: Abundance matrices based on the counts of full-length reads only or all reads. 
+### Output files:
+Abundance matrices based on the counts of full-length reads only or all reads. 
 - tRNA_counts/FLcount_bytRNA_eValculled.txt 
 - tRNA_counts/ALLcount_bytRNA_eValculled.txt 
 ### Commands: 
