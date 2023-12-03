@@ -1,20 +1,18 @@
 #!/bin/sh
 #SBATCH -N 1 #request Bourne shell as shell for job
 #SBATCH -n 8
-#SBATCH --mail-type end
-#SBATCH --mail-user=rc836@mit.edu
 
 echo "count 3' clipped reads; nodes: 1; mem: 10G"
 echo "Start - `date`"
 echo "----"
-for f in `ls fastq/*/*_sequence.3clipped.fq` # fastq/180719Ded_D18-6947/180719Ded_D18-6947_1_sequence.3clipped.fq
+for f in `ls fastq/*/*_sequence.3clipped.fq`
 do
 	start="`date +%s`"
-	l=`wc -l $f|cut -f1 -d " "` # returns line number only
+	l=`wc -l $f|cut -f1 -d " "`
 	a=$((l/4))
 	echo "${a} sequences in ${f}"
 	t=`echo $f |cut -f1-2 -d "."`
-	echo "${a}\t${f}" >${t}_readcount # fastq/180719Ded_D18-6947/180719Ded_D18-6947_1_sequence.3clipped_readcount
+	echo "${a}\t${f}" >${t}_readcount
 	end="`date +%s`"
 	echo "$((($end-$start)/60)) minutes and $((($end-$start)%60)) seconds elapsed."	
 done

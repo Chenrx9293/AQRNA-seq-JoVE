@@ -1,8 +1,6 @@
 #!/bin/sh
 #SBATCH -N 1 #request Bourne shell as shell for job
 #SBATCH -n 8
-#SBATCH --mail-type end
-#SBATCH --mail-user=rc836@mit.edu
 
 echo "Remove assignments > 0.001 eVal; nodes: 1; mem: 24G"
 echo "----"

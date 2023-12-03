@@ -1,11 +1,9 @@
-## step1. read input file.
-## creates a dict with seqID as key and tRNAs and eVal, start, end as subdict(s)
-## store lowest eVal for each seqID subdict under 'besteVal' key
+
 import time
 import sys
 try:
-    in1 = sys.argv[1] #in1=tRNA_08-10_blast/180719Ded_D18-6947_1.tRNAblast_paired
-    in2 = sys.argv[2] #in2=D18-6947
+    in1 = sys.argv[1] 
+    in2 = sys.argv[2] 
 except:
     print(__doc__)
     sys.exit(1)

@@ -1,24 +1,31 @@
 # AQRNA-seq-JoVE
 Instructions and scripts for running the data analytics pipeline of AQRNA-seq
 # System and job scheduler
-For demonstration purposes, both the master script and its associated sub-scripts are tailored for cluster computing on Luria, a Linux cluster hosted by the BioMicro Center at Massachusetts Institute of Technology, using SLURM as the job scheduler for job management. If your computing cluster operates with different job schedulers, you'll need to adjust the lines related to job submission accordingly. If you are not using cluster computing, you can make the following modifications: (i) change all instances of "sbatch" in the master script and all the .sh files to "sh" and (ii) delete the header lines beginning with "#SBATCH" in all .sh files.
+For demonstration purposes, the scripts are tailored for cluster computing on Luria, a Linux cluster hosted by the BioMicro Center at Massachusetts Institute of Technology, using SLURM as the job scheduler for job management. If your computing cluster operates with different job schedulers, you'll need to adjust the lines related to job submission accordingly. If you are not using cluster computing, you can make the following modifications: (i) change all instances of "sbatch" in the master script and all the .sh files to "sh" and (ii) delete the header lines beginning with "#SBATCH" in all .sh files.
 # Set up directories and prepare files 
 Setting up directories correctly and preparing all necessary files are of crucial importance for properly executing the data analytics pipeline of AQRNA-seq. Please complete the following steps before running the pipeline:
 - Retrieve raw sequence reads from the external sequencing center and assess sequencing quality using open-source programs such as FastQC or fastp. 
 - Create a directory named “AQRNA-seq” for execution of the data analytics pipeline and place all scripts provided here into this directory. 
 - Within the ΑQRNA-seq directory, create a directory named “fastq” for storing the sequence reads (in FASTQ format) of all samples slated for analysis. Inside the fastq directory, create a directory named "GroupID_SampleID" for each sample, where "SampleID" denotes a unique identifier for the sample and "GroupID" represents any information (e.g., experimental trial) that could be used for dividing samples into distinct groups. Both "GroupID" and "SampleID" cannot be empty strings and cannot contain underscores. Place the sequence read files of each sample into the respective directory. Name the forward read file as "GroupID_SampleID_1_sequence.fastq" and the reverse read file as "GroupID_SampleID_2_sequence.fastq".
 - Generate a library file in the FASTA format with the name “Reference_Sequence.fasta” and place this file into the AQRNA-seq directory. This library file is key to the analysis of diverse small RNA species and thus should contain all reference sequences of the small RNA species of interest as well as positive and/or negative control sequences. Each reference sequence should have a unique header without spaces, and headers that are substrings of other headers should be avoided. For instance, we recommend against using both "Met-CAT-1" and "fMet-CAT-1" as headers, which can be substituted by "tRNA-Met-CAT-1" and "tRNA-fMet-CAT-1". 
-- Modify line 10 of the submit_12a_nodupe_tRNA.sh file to supply reference sequence headers. 
-- Modify line 9 of the submit_13a_recull_eVal_tRNA.sh file to supply reference sequence headers. 
-- Modify line 11 of the submit_13b_count_tRNAalignments.sh file to supply reference sequence headers. 
+- Modify line 8 of the submit_12a_nodupe_tRNA.sh file to supply reference sequence headers. 
+- Modify line 7 of the submit_13a_recull_eVal_tRNA.sh file to supply reference sequence headers. 
+- Modify line 9 of the submit_13b_count_tRNAalignments.sh file to supply reference sequence headers.
+- Modify line 2 of the submit_13e_headerrow_tRNA.py file to supply sample IDs
 If the steps within this section are properly executed, there is no need to prepare specific input files for individual steps within the "Run the pipeline" section below.
+# Dependencies
+All dependencies need to be installed prior to running the pipeline.
+- Perl ≥ 5.24.1
+- Python ≥ 3.6.4
+- NCBI BLAST+ blastn ≥ 2.6.0
+- fastxtoolkit ≥ 0.0.13
 # Run the pipeline
-All steps should be executed from within the AQRNA-seq directory.
+All steps should be executed from within the AQRNA-seq directory (refer to the section "Set up directories and prepare files").
 ## Step 1: Enumerate quality-filtered sequence reads
 ### Description:
 This step involves enumerating the quality-filtered sequence reads within each FASTQ file. The counts for forward and reverse reads should be identical.
 ### Input files:
-Quality-filtered sequence reads in FASTQ format for individual samples, as shown below. Detailed instructions on file preparation can be found in the section titled "Set up directories and prepare files". Please note that "GroupID" and "SampleID" within the path below are placeholders and should be replaced accordingly.
+Quality-filtered sequence reads in FASTQ format for individual samples, as shown below. Detailed instructions on file preparation can be referenced in section "Set up directories and prepare files". Please note that "GroupID" and "SampleID" in the path below are placeholders and should be substituted with appropriate identifiers specific to the studies.
 - fastq/GroupID_SampleID/GroupID_SampleID_1_sequence.fastq 
 - fastq/GroupID_SampleID/GroupID_SampleID_2_sequence.fastq 
 ### Output files:
@@ -30,7 +37,7 @@ sbatch submit_01a_seqcount.sh
 ### Description:
 This step verifies the sequencing process by enumerating the occurrence of linker sequences and their reverse complements in the quality-filtered sequence reads. Expect high counts for the Linker 1 sequence in forward reads and high counts for the Linker 2 sequence in reverse reads.
 ### Input files:
-Quality-filtered sequence reads in FASTQ format for individual samples, as shown below. Detailed instructions on file preparation can be found in the section titled "Set up directories and prepare files". Please note that "GroupID" and "SampleID" within the path below are placeholders and should be replaced accordingly. 
+Quality-filtered sequence reads in FASTQ format for individual samples, as shown below. Detailed instructions on file preparation can be referenced in section "Set up directories and prepare files". Please note that "GroupID" and "SampleID" in the path below are placeholders and should be substituted with appropriate identifiers specific to the studies. 
 - fastq/GroupID_SampleID/GroupID_SampleID_1_sequence.fastq 
 - fastq/GroupID_SampleID/GroupID_SampleID_2_sequence.fastq 
 ### Output files:
@@ -42,7 +49,7 @@ sbatch submit_02a_grep_FAST.sh
 ### Description:
 This step trims the 3' adaptor sequences from both forward and reverse reads. The sequence "CACTCGGGCA" is used for identification of the 3' adaptor sequence for the forward reads, while the sequence "TGAAGAGCCT" is used for identification of the 3' adaptor sequence for the reverse reads. Partial alignments to these sequences are tolerated. Sequence reads shorter than 5 bp after trimming are removed. Reads with N's are allowed to be retained.
 ### Input files:
-Quality-filtered sequence reads in FASTQ format for individual samples, as shown below. Detailed instructions on file preparation can be found in the section titled "Set up directories and prepare files". Please note that "GroupID" and "SampleID" within the path below are placeholders and should be replaced accordingly. 
+Quality-filtered sequence reads in FASTQ format for individual samples, as shown below. Detailed instructions on file preparation can be referenced in section "Set up directories and prepare files". Please note that "GroupID" and "SampleID" in the path below are placeholders and should be substituted with appropriate identifiers specific to the studies. 
 - fastq/GroupID_SampleID/GroupID_SampleID_1_sequence.fastq 
 - fastq/GroupID_SampleID/GroupID_SampleID_2_sequence.fastq 
 ### Output files:
@@ -81,7 +88,7 @@ RC of the reverse reads after adaptor trimming in FASTQ format.
 sbatch submit_05a_rcread2.sh
 ## Step 6: Trim the random nucleotides from Linker 1 for forward and reverse reads
 ### Description:
-This step involves trimming the two random nucleotides originated from the 5' of Linker 1. During library preparation, these two random nucleotides effectively mitigate ligation biases induced by diverse terminal sequences of the RNA molecules. These random nucleotides are not trimmed with the 3' adaptors and thus need to be trimmed in this step.
+This step involves trimming the two random nucleotides originated from the 5' of Linker 1. During library preparation, these two random nucleotides were incorporated to effectively mitigate ligation biases induced by diverse terminal sequences of the RNA molecules. These random nucleotides are not trimmed with the 3' adaptors and thus need to be trimmed in this step.
 ### Input files:
 Forward reads and RC reverse reads after adaptor trimming. 
 - fastq/GroupID_SampleID/GroupID_SampleID_1_sequence.3clipped.fq 
@@ -92,7 +99,7 @@ Forward reads and RC reverse reads after random nucleotide trimming.
 - fastq/GroupID_SampleID/GroupID_SampleID_2_sequence.rc3clipped.fq_trimNN 
 ### Command:
 sbatch submit_06a_trimNN.sh
-## Step 7: Filter sequence reads based on read length threshold of 10 bp
+## Step 7: Filter sequence reads based on a read length threshold of 10 bp
 ### Description:
 This step restricts the downstream analyses to forward and RC reverse reads longer than 10 bp after random nucleotide trimming, as small RNA fragments and truncated cDNAs due to polymerase fall-off are unlikely to fall below 10 bp in length. 
 ### Input files:
@@ -118,7 +125,7 @@ Forward and RC reverse reads after length filtering in FASTA format.
 - fastq/GroupID_SampleID/GroupID_SampleID_1_sequence.10bp.fa  
 - fastq/GroupID_SampleID/GroupID_SampleID_2_sequence.10bp.fa 
 ### Output files:
-Raw BLAST alignment results for forward and RC reverse reads in tabulate format 
+Raw blastn alignment results for forward and RC reverse reads in tabulate format.
 - tRNA_08-10_blast/GroupID_SampleID_1.tRNAblast
 - tRNA_08-10_blast/GroupID_SampleID_2.tRNAblast
 ### Commands: 
@@ -126,7 +133,7 @@ Load the BLAST program.
 - module load blast/2.6.0
 
 Create the BLAST database from the reference sequence library in FASTA format. 
-- makeblastdb -in StdOlg_Sequence.fasta -parse_seqids -dbtype nucl
+- makeblastdb -in Reference_Sequence.fasta -parse_seqids -dbtype nucl
 
 Create a directory for storing BLAST alignment results. 
 - mkdir tRNA_08-10_blast
@@ -139,9 +146,9 @@ Align RC reverse reads to the reference sequence library.
 
 ## Step 9: Pair the forward and RC reverse reads that are successfully aligned to the reference sequence library
 ### Description:
-This step cross-validates the BLAST alignment results by identifying pairs of forward and RC reverse reads that are aligned to the same reference sequence with an overlap between the aligned regions. 
+This step cross-validates the blastn alignment results by identifying pairs of forward and RC reverse reads that are aligned to the same reference sequence with an overlap between the aligned regions. 
 ### Input files:
-Raw BLAST alignment results for forward and RC reverse reads in tabulate format. 
+Raw blastn alignment results for forward and RC reverse reads in tabulate format. 
 - tRNA_08-10_blast/GroupID_SampleID_1.tRNAblast 
 - tRNA_08-10_blast/GroupID_SampleID_2.tRNAblast 
 ### Output files:
@@ -154,7 +161,7 @@ sbatch submit_09_tRNAblastpair.sh
 ### Description:
 This step involves enumerating unique forward and RC reverse reads that are successfully aligned to the reference sequence library. 
 ### Input files:
-Raw BLAST alignment results for forward and RC reverse reads in tabulate format. 
+Raw blastn alignment results for forward and RC reverse reads in tabulate format. 
 - tRNA_08-10_blast/GroupID_SampleID_1.tRNAblast 
 - tRNA_08-10_blast/GroupID_SampleID_2.tRNAblast 
 ### Output files:
@@ -165,51 +172,51 @@ The count of unique forward and RC reverse reads that are successfully aligned t
 sbatch submit_10a_tRNAblastcount.sh
 ## Step 11: Resolve sequence reads aligned to multiple reference sequences 
 ### Description:
-In cases where a single query sequence (i.e., sequence read) is successfully aligned to multiple subject sequences (i.e., reference sequences) during the BLAST analysis, this step aims to identify the optimal alignment based on various parameters, such as E-value, bit-score, and alignment length. Alignments demonstrating lower E-values, higher bit-scores, and/or longer lengths are considered superior compared to other alignment candidates. 
+In cases where a single query sequence (i.e., sequence read) is successfully aligned to multiple subject sequences (i.e., reference sequences) during the BLAST analysis, this step aims to identify the optimal alignment based on various parameters, such as E-value, bit-score, and alignment length. Alignments with lower E-values, higher bit-scores, and/or longer lengths are considered superior compared to other alignment candidates. 
 ### Input files:
 Forward and RC reverse read pairs with a consensus alignment. 
-- tRNA_08-10_blast/GroupID_SampleID_1.tRNAblast_paired: read pairs with a consensus alignment 
+- tRNA_08-10_blast/GroupID_SampleID_1.tRNAblast_paired 
 ### Output files: 
-The optimal BLAST alignment for all sequence reads. 
+The optimal blastn alignment for all sequence reads. 
 - tRNA_11_culledfileout/SampleID_culled.txt
 
-The optimal BLAST alignments for sequence reads that could not be aligned to unique reference sequences. 
+The optimal blastn alignments for sequence reads that could not be aligned to unique reference sequences. 
 - tRNA_11_culledfileout/SampleID_culled_disc.txt 
 
-The optimal BLAST alignment for sequence reads with unique alignment to the reference sequence. library.
+The optimal BLAST alignment for sequence reads with unique alignment to the reference sequence library.
 - tRNA_11_culledfileout/SampleID_culled_nodupe.txt 
 
 ### Commands: 
-Create a directory for storing the optimal BLAST alignment files. 
+Create a directory for storing the optimal blastn alignment files. 
 - mkdir tRNA_11_culledfileout 
 
 Identify the optimal BLAST alignments for sequence reads. 
 - sbatch submit_11a_tRNAcull.sh 
 
-## Step 12: Extract BLAST alignment results for each reference sequence. 
+## Step 12: Extract BLAST results for each reference sequence. 
 ### Description:
-This step partitions the BLAST alignment results with respect to individual reference sequences. 
+This step partitions the blastn alignment results with respect to individual reference sequences. 
 ### Input files:
-The optimal BLAST alignment for sequence reads with unique alignment to the reference sequence. 
+The optimal blastn alignment for sequence reads with unique alignment to the reference sequence. 
 - tRNA_11_culledfileout/SampleID_culled_nodupe.txt 
 ### Output files:
-The BLAST alignment results that belong to each reference sequence (e.g., specific tRNA isoacceptors). 
+The blastn alignment results that belong to each reference sequence (e.g., specific tRNAs). 
 - tRNA_12_grepped/SampleID_Small-RNA-ID_maxeVal 
 ### Commands: 
 Create a directory for storing output files. 
 - mkdir tRNA_12_grepped 
 
-Extract BLAST alignment results that belong to each reference sequence. 
+Extract blastn alignment results that belong to each reference sequence. 
 - sbatch submit_12a_nodupe_tRNA.sh 
 
-Remove BLAST alignments with eVal > 0.001. 
+Remove blastn alignments with eVal > 0.001. 
 - sbatch submit_13a_recull_eVal_tRNA.sh 
 
 ## Step 13: Generate the abundance matrix. 
 ### Description:
 This steps generates an abundance matrix, with members of the small RNA species of interest as rows and samples as columns, which can be used for downstream analyses. 
 ### Input files:
-The BLAST alignment results that belong to each reference sequence (e.g., specific tRNA isoacceptors). 
+The blastn alignment results that belong to each reference sequence (e.g., specific tRNAs). 
 - tRNA_12_grepped/SampleID_Small-RNA-ID_maxeVal 
 ### Output files: Abundance matrices based on the counts of full-length reads only or all reads. 
 - tRNA_counts/FLcount_bytRNA_eValculled.txt 
@@ -226,6 +233,3 @@ Create a directory for storing abundance matrices.
 
 Reorganize intermediate results into abundance matrices to facilitate downstream analyses. 
 - sbatch submit_13e_formatCounts_tRNA.sh 
-
-
-

@@ -1,22 +1,20 @@
 #!/bin/sh
 #SBATCH -N 1 #request Bourne shell as shell for job
 #SBATCH -n 8
-#SBATCH --mail-type end
-#SBATCH --mail-user=rc836@mit.edu
 
 module load fastxtoolkit/0.0.13
 echo "clip 3' linker; nodes: 1; mem: 29G"
 echo "Start - `date`"
 echo "----"
 
-for f in `ls fastq/*/*_1_sequence.fastq` # fastq/180719Ded_D18-6947/180719Ded_D18-6947_1_sequence.fastq
+for f in `ls fastq/*/*_1_sequence.fastq`
 do
 start="`date +%s`"
-	t=`echo $f | cut -d "." -f1` # fastq/180719Ded_D18-6947/180719Ded_D18-6947_1_sequence
+	t=`echo $f | cut -d "." -f1`
 	echo "$t"
-	fastx_clipper -a CACTCGGGCA -Q33 -v -n -M 8 -i $f -o ${t}.3clipped.fq # fastq/180719Ded_D18-6947/180719Ded_D18-6947_1_sequence.3clipped.fq
+	fastx_clipper -a CACTCGGGCA -Q33 -v -n -M 8 -i $f -o ${t}.3clipped.fq
 	#-v output verbose report
-	#-n do not discard sequences that contain N --> different from Duan's!
+	#-n do not discard sequences that contain N
 	#-M require minimum adapter match of 8
 end="`date +%s`"
 echo "$((($end-$start)/60)) minutes and $((($end-$start)%60)) seconds elapsed."	
